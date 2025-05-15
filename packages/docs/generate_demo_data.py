@@ -50,6 +50,7 @@ def main(output: str):
 
     name = "spawn99/wine-reviews"
     columns = [
+        "title",
         "country",
         "province",
         "description",
