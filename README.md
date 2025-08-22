@@ -2,7 +2,27 @@
 
 Embedding Atlas is a tool that provides interactive visualizations for large embeddings. It allows you to visualize, cross-filter, and search embeddings and metadata.
 
-See <https://apple.github.io/embedding-atlas> for a demo and documentation.
+**Features**
+
+- 🏷️ **Automatic data clustering & labeling:**
+  Interactively visualize and navigate overall data structure.
+
+- 🫧 **Kernel density estimation & density contours:**
+  Easily explore and distinguish between dense regions of data and outliers.
+
+- 🧊 **Order-independent transparency:**
+  Ensure clear, accurate rendering of overlapping points.
+
+- 🔍 **Real-time search & nearest neighbors:**
+  Find similar data to a given query or existing data point.
+
+- 🚀 **WebGPU implementation (with WebGL 2 fallback):**
+  Fast, smooth performance (up to few million points) with modern rendering stack.
+
+- 📊 **Multi-coordinated views for metadata exploration:**
+  Interactively link and filter data across metadata columns.
+
+Please visit <https://apple.github.io/embedding-atlas> for a demo and documentation.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./packages/docs/assets/embedding-atlas-dark.png">
@@ -19,7 +39,7 @@ pip install embedding-atlas
 embedding-atlas <your-dataset.parquet>
 ```
 
-In addition to the command line too, Embedding Atlas is also available as a Jupyter widget:
+In addition to the command line tool, Embedding Atlas is also available as a Jupyter widget:
 
 ```python
 from embedding_atlas.widget import EmbeddingAtlasWidget
@@ -28,7 +48,7 @@ from embedding_atlas.widget import EmbeddingAtlasWidget
 EmbeddingAtlasWidget(df)
 ```
 
-Finally, components from Embedding Atlas are also available in a npm package:
+Finally, components from Embedding Atlas are also available in an npm package:
 
 ```bash
 npm install embedding-atlas
@@ -43,6 +63,8 @@ import { EmbeddingAtlas, EmbeddingView, Table } from "embedding-atlas/react";
 // or Svelte:
 import { EmbeddingAtlas, EmbeddingView, Table } from "embedding-atlas/svelte";
 ```
+
+For more information, please visit <https://apple.github.io/embedding-atlas/overview.html>.
 
 ## BibTeX
 
@@ -99,6 +121,8 @@ Python:
 Documentation:
 
 - `packages/docs`: The documentation website.
+
+For more information, please visit <https://apple.github.io/embedding-atlas/develop.html>.
 
 ## License
 

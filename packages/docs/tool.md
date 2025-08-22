@@ -24,6 +24,7 @@ To avoid package installation issues, we recommend using the [uv package manager
 uvx embedding-atlas
 ```
 
+On Windows, you may install the package on either the [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) or directly on Windows. To use NVIDIA GPUs, you'll need to install a PyTorch version that supports CUDA, see [here](https://pytorch.org/get-started/locally/) for more details.
 :::
 
 ## Loading Data
@@ -46,26 +47,30 @@ You can instead load datasets from Hugging Face:
 embedding-atlas huggingface_org/dataset_name
 ```
 
-## Visualizing Embedding Projections
+## Visualizing Embeddings
 
-To visual embedding projections, pre-compute the X and Y coordinates, and specify the column names with `--x` and `--y`, such as:
+The script will use [SentenceTransformers](https://sbert.net/) to compute embedding vectors for the specified column containing the text data. The script will then project the high-dimensional embedding vectors to 2D with [UMAP](https://umap-learn.readthedocs.io/en/latest/index.html).
+
+::: tip
+Optionally, if you know what column your text data is in beforehand, you can specify which column to use with the `--text` flag, for example:
+
+```bash
+embedding-atlas path_to_dataset.parquet --text text_column
+```
+
+Similarly, you may supply the `--image` flag for image data, or the `--vector` flag for pre-computed embedding vectors.
+:::
+
+If you've already pre-computed the embedding projection (e.g., by running your own embedding model and projecting them with UMAP), you may store them as two columns such as `projection_x` and `projection_y`, and pass them into `embedding-atlas` with the `--x` and `--y` flags:
 
 ```bash
 embedding-atlas path_to_dataset.parquet --x projection_x --y projection_y
 ```
 
-You may use the [SentenceTransformers](https://sbert.net/) package to compute high-dimensional embeddings from text data, and then use the [UMAP](https://umap-learn.readthedocs.io/en/latest/index.html) package to compute 2D projections.
-
-You may also specify a column for pre-computed nearest neighbors:
-
-```bash
-embedding-atlas path_to_dataset.parquet --x projection_x --y projection_y --neighbors neighbors
-```
-
+You may also pass in the `--neighbors` flag to specify the column name for pre-computed nearest neighbors.
 The `neighbors` column should have values in the following format: `{"ids": [id1, id2, ...], "distances": [d1, d2, ...]}`.
+The IDs should be zero-based row indices.
 If this column is specified, you'll be able to see nearest neighbors for a selected point in the tool.
-
-:::
 
 Once this script completes, it will print out a URL like `http://localhost:5055/`. Open the URL in a web browser to view the embedding.
 
@@ -75,36 +80,52 @@ Once this script completes, it will print out a URL like `http://localhost:5055/
 Usage: embedding-atlas [OPTIONS] INPUTS...
 
 Options:
-  --text TEXT                   The column name for text.
-  --image TEXT                  The column name for image.
-  --split TEXT                  The data split name for Hugging Face data.
-                                Repeat this command for multiple splits.
-  --model TEXT                  The model for producing text embeddings.
-  --trust-remote-code           Trust remote code when loading models.
-  --x TEXT                      The column name for x coordinate.
-  --y TEXT                      The column name for y coordinate.
-  --neighbors TEXT              The column name for pre-computed nearest
-                                neighbors. The values should be in {"ids":
-                                [n1, n2, ...], "distances": [d1, d2, ...]}
-                                format.
-  --sample INTEGER              The number of rows to sample from the original
-                                dataset.
-  --umap-n-neighbors INTEGER    The n_neighbors parameter for UMAP.
-  --umap-min-dist FLOAT         The min_dist parameter for UMAP.
-  --umap-metric TEXT            The metric for UMAP.
-  --umap-random-state INTEGER   The random seed for UMAP.
-  --duckdb TEXT                 DuckDB server URI (e.g., ws://localhost:3000,
-                                http://localhost:3000), or 'wasm' to run
-                                DuckDB in browser, or 'server' to run DuckDB
-                                in this server. Default to 'wasm'.
-  --host TEXT                   The hostname of the http server.
-  --port INTEGER                The port of the http server.
-  --auto-port / --no-auto-port  Enable / disable auto port selection. If
-                                disabled, the application crashes if the
-                                specified port is already used.
-  --static TEXT                 Path to the static files for frontend.
-  --export-application TEXT     Export a static Web application to the given
-                                zip file and exit.
-  --version                     Show the version and exit.
-  --help                        Show this message and exit.
+  --text TEXT                     Column containing text data.
+  --image TEXT                    Column containing image data.
+  --vector TEXT                   Column containing pre-computed vector
+                                  embeddings.
+  --split TEXT                    Dataset split name(s) to load from Hugging
+                                  Face datasets. Can be specified multiple
+                                  times for multiple splits.
+  --enable-projection / --disable-projection
+                                  Compute embedding projections from
+                                  text/image/vector data. If disabled without
+                                  pre-computed projections, the embedding view
+                                  will be unavailable.
+  --model TEXT                    Model name for generating embeddings (e.g.,
+                                  'all-MiniLM-L6-v2').
+  --trust-remote-code             Allow execution of remote code when loading
+                                  models from Hugging Face Hub.
+  --x TEXT                        Column containing pre-computed X coordinates
+                                  for the embedding view.
+  --y TEXT                        Column containing pre-computed Y coordinates
+                                  for the embedding view.
+  --neighbors TEXT                Column containing pre-computed nearest
+                                  neighbors in format: {"ids": [n1, n2, ...],
+                                  "distances": [d1, d2, ...]}. IDs should be
+                                  zero-based row indices.
+  --sample INTEGER                Number of random samples to draw from the
+                                  dataset. Useful for large datasets.
+  --umap-n-neighbors INTEGER      Number of neighbors to consider for UMAP
+                                  dimensionality reduction (default: 15).
+  --umap-min-dist FLOAT           The min_dist parameter for UMAP.
+  --umap-metric TEXT              Distance metric for UMAP computation
+                                  (default: 'cosine').
+  --umap-random-state INTEGER     Random seed for reproducible UMAP results.
+  --duckdb TEXT                   DuckDB connection mode: 'wasm' (run in
+                                  browser), 'server' (run on this server), or
+                                  URI (e.g., 'ws://localhost:3000').
+  --host TEXT                     Host address for the web server (default:
+                                  localhost).
+  --port INTEGER                  Port number for the web server (default:
+                                  5055).
+  --auto-port / --no-auto-port    Automatically find an available port if the
+                                  specified port is in use.
+  --static TEXT                   Custom path to frontend static files
+                                  directory.
+  --export-application TEXT       Export the visualization as a standalone web
+                                  application to the specified ZIP file and
+                                  exit.
+  --version                       Show the version and exit.
+  --help                          Show this message and exit.
 ```

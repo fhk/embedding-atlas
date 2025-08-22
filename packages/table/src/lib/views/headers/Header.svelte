@@ -6,7 +6,9 @@
 
   import { ConfigContext } from "../../context/config.svelte";
   import { Context } from "../../context/context.svelte";
+  import { CustomHeadersContext } from "../../context/custom-headers.svelte";
   import { OID } from "../../model/TableModel.svelte.js";
+  import CustomHeaderContents from "./CustomHeaderContents.svelte";
 
   interface Props {
     col: string;
@@ -17,6 +19,7 @@
   const model = Context.model;
   const schema = Context.schema;
   const config = ConfigContext.config;
+  const customHeadersConfig = CustomHeadersContext.config;
 
   let element: HTMLElement | null = $state(null);
   let contentWidth: number = $state(0);
@@ -43,12 +46,17 @@
   style:--extra-padding-left={(isFirstCol ? config.firstColLeftPadding : 0) + "px"}
 >
   <div class="header-content" bind:clientWidth={contentWidth}>
-    {#if col !== OID}
-      <HeaderTitle col={col} />
-      <SortButtons col={col} />
-    {:else}
-      <RowNumberTitle />
+    {#if customHeadersConfig[col]}
+      <CustomHeaderContents col={col} customHeader={customHeadersConfig[col]} />
     {/if}
+    <div class="header-title">
+      {#if col !== OID}
+        <HeaderTitle col={col} />
+        <SortButtons col={col} />
+      {:else}
+        <RowNumberTitle />
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -57,13 +65,13 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: end;
 
     width: var(--width);
-    height: var(--height);
+    min-height: var(--height);
     flex-shrink: 0;
     box-sizing: border-box;
-    padding: 0.25rem;
+    padding: 0.25em;
     padding-right: calc(calc(var(--padding-x) / 2) + var(--extra-padding-right));
     padding-left: calc(calc(var(--padding-x) / 2) + var(--extra-padding-left));
 
@@ -74,10 +82,17 @@
 
   .header-cell.number {
     justify-content: end;
-    /* flex-direction: row-reverse; */
   }
 
   .header-content {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    height: 1.5em;
+    align-items: center;
     display: flex;
     flex-direction: row;
     flex-shrink: 0;

@@ -2,8 +2,10 @@
 
 import { derived, writable } from "svelte/store";
 
-let systemDarkMode = writable<boolean>(window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
-window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+let matcher = typeof window !== "undefined" ? window.matchMedia?.("(prefers-color-scheme: dark)") : null;
+
+let systemDarkMode = writable<boolean>(matcher?.matches ?? false);
+matcher?.addEventListener("change", (event) => {
   systemDarkMode.set(event.matches);
 });
 

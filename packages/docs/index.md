@@ -24,20 +24,27 @@ hero:
       link: /overview
 
 features:
-  - icon: 📊
-    title: Explore massive text data
-    details: Visualize, cross-filter, and search embeddings and metadata. Powered by Mosaic and DuckDB.
   - icon: 🏷️
-    title: Automatic labeling
-    details: Inspect your data through automatic labels that interactively scale across resolutions.
-  - icon: 📦
-    title: Python command line tool
-    details: Compute embeddings and visualize your data locally or from Hugging Face with one script.
-  - icon: 🛠️
-    title: Standalone web component
-    details: Easily include the main embedding visualization into your own web app.
+    title: Automatic data clustering & labeling
+    details: Interactively visualize and navigate overall data structure.
+
+  - icon: 🫧
+    title: Kernel density estimation & density contours
+    details: Easily explore and distinguish between dense regions of data and outliers.
+
+  - icon: 🧊
+    title: Order-independent transparency
+    details: Ensure clear, accurate rendering of overlapping points.
+
+  - icon: 🔍
+    title: Real-time search & nearest neighbors
+    details: Find similar data to a given query or existing data point.
+
+  - icon: 🚀
+    title: WebGPU implementation (with WebGL 2 fallback)
+    details: Fast, smooth performance (up to few million points) with modern rendering stack.
+
+  - icon: 📊
+    title: Multi-coordinated views for metadata exploration
+    details: Interactively link and filter data across metadata columns.
 ---
-
-<h2>Demo</h2>
-
-<iframe style="width:100%; height: 700px; border: none; border-radius: 4px" src="./demo/index.html"></iframe>

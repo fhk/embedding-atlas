@@ -10,6 +10,11 @@ export default defineConfig({
   worker: {
     format: "es",
     plugins: () => [wasm()],
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   },
   build: {
     target: "esnext",

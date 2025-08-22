@@ -10,6 +10,12 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      publish_pages:
+        description: "Publish Documentation Website"
+        required: false
+        type: boolean
 
 jobs:
   build:
@@ -32,7 +38,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - uses: actions/cache@v4
         id: cache-demo-data
@@ -118,7 +124,7 @@ jobs:
 
   publish-pages:
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || inputs.publish_pages == true
     needs:
       - build
     permissions:
